@@ -20,6 +20,11 @@ app.post('/trashCanFilledPercentage', function (req, res) {
     trashCanFilledPercentage = Number(req.body.value);
 
     io.emit('trashCanFilledPercentageUpdate', trashCanFilledPercentage);
+
+    //send data to influxDB(Install influxdb to server)
+
+    //make a series using influxDB
+
     console.log('Updated trashfill percentage: ' + trashCanFilledPercentage);
     
     res.write('updated the percentage');
