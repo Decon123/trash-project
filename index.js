@@ -48,4 +48,4 @@ const server = http.listen(port, () => {
 io.on('connection', function (socket) {
     socket.emit('trashCanFilledPercentageUpdate', trashCanFilledPercentage);
     console.log('Client connected...')
-});
+}); 
