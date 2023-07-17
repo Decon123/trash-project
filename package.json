@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js"
   },
-  "author": "",
+  "author": "Decon Kelaart",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.20.2",
@@ -15,5 +15,13 @@
     "fusioncharts": "^3.20.0",
     "nodemon": "^2.0.22",
     "socket.io": "^4.6.2"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Decon123/trash-project.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Decon123/trash-project/issues"
+  },
+  "homepage": "https://github.com/Decon123/trash-project#readme"
 }
