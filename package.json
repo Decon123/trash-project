@@ -10,7 +10,9 @@
   "author": "Decon Kelaart",
   "license": "ISC",
   "dependencies": {
+    "aws-iot-device-sdk": "^2.2.12",
     "body-parser": "^1.20.2",
+    "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "fusioncharts": "^3.20.0",
     "nodemon": "^2.0.22",
