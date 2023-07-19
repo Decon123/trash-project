@@ -10,7 +10,11 @@
   "author": "Decon Kelaart",
   "license": "ISC",
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.370.0",
+    "@aws-sdk/client-dynamodb-streams": "^3.370.0",
+    "@aws-sdk/lib-dynamodb": "^3.370.0",
     "aws-iot-device-sdk": "^2.2.12",
+    "aws-sdk": "^2.1417.0",
     "body-parser": "^1.20.2",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
