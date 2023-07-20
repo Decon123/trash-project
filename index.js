@@ -92,7 +92,7 @@ app.use('/js', express.static('js'));
 const port = process.env.PORT || 3000;
 
 const server = http.listen(port, () => {
-  console.log(`Server running on http://3.91.54.203:${port}`);
+  console.log(`Server running on http://44.211.224.99:${port}`);
 });
 
 io.on('connection', (socket) => {
