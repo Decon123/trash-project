@@ -57,29 +57,29 @@
                 value: '0'  // Initial water level value
             },
             events: {
-                rendered: function(evtObj, argObj) {
-                  setInterval(function() {
-                    evtObj.sender.getData();
-                    evtObj.sender.setData(filledPercentage);
-                  }, 500);
+                rendered: function (evtObj, argObj) {
+                    chartRef = evtObj.sender;
+                    setInterval(function () {
+                        chartRef.getData();
+                        chartRef.setData(filledPercentage);
+                    }, 500);
                 },
-                realTimeUpdateComplete: function(evt, arg) {
-                    var annotations = evt.sender.annotations,
-                      dataVal = evt.sender.getData(),
-
-                      
-                      colorVal = (dataVal >= 70) ? "#6caa03" : ((dataVal <= 35) ? "#e44b02" : "#f8bd1b");
+                realTimeUpdateComplete: function (evt, arg) {
+                    var annotations = chartRef.annotations,
+                        dataVal = chartRef.getData(),
+                        colorVal = (dataVal >= 70) ? "#6caa03" : ((dataVal <= 35) ? "#e44b02" : "#f8bd1b");
                     //Updating value
 
-                    console.log("dataval", annotations)
+                    console.log("dataval", annotations);
 
                     //Changing background color as per value
                     annotations && annotations.update('rangeBg', {
-                      "fillcolor": colorVal
+                        "fillcolor": colorVal
                     });
-          
-                  }
+
+                }
             }
+
         };
 
         FusionCharts.ready(function(){
@@ -91,6 +91,11 @@
 
                 filledPercentage = Number(data);
                 console.log("Updated percentage: " + data);
+
+                // Update the chart with the new value
+                if (chartRef) {
+                    chartRef.setData(filledPercentage);
+                }
             });
         });
 

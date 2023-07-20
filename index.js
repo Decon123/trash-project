@@ -10,6 +10,7 @@ app.use(bodyParser.json());
 
 // Load the AWS SDK for Node.js
 const { DynamoDBClient, GetItemCommand } = require('@aws-sdk/client-dynamodb');
+const { fromBase64 } = require('@aws-sdk/util-base64-node');
 
 // Set your AWS credentials (or use environment variables)
 const awsConfig = {
@@ -35,19 +36,61 @@ const params = {
   },
 };
 
+// Convert Binary data to a real value (floating-point number)
+function toDecimal(v) {
+    let binary = '';
+    if(typeof v == 'string') {
+      binary = v.split();
+    } else {
+        binary = v.toString().split();
+    }
+    let decimal = 0;
+    for(let i = 0; i < binary.length; i++) {
+        decimal = (decimal * 2) + binary[i];
+    }
+    return decimal;
+  }
+// Function to update trashCanFilledPercentage variable
+async function updateTrashCanFilledPercentage() {
+    try {
+      const data = await dynamoDBClient.send(new GetItemCommand(params));
+      if (data && data.Item && data.Item.RealData_raw && data.Item.RealData_raw.B) {
+        const realValue = toDecimal(data.Item.RealData_raw.B);
+        trashCanFilledPercentage = realValue;
+        console.log('Retrieved item - RealData:', realValue);
+  
+        // Get the last value from the array
+        const lastValue = realValue[realValue.length - 1];
+        console.log('Last value:', lastValue);
+      } else {
+        console.log('Invalid data format or missing attribute');
+      }
+    } catch (err) {
+      console.error('Error retrieving item:', err);
+    }
+  }
+  
+  
 app.get('/trashCanFilledPercentage', function (req, res) {
   res.write(String(trashCanFilledPercentage));
   res.end();
 });
 
+/* 
 dynamoDBClient.send(new GetItemCommand(params))
   .then((data) => {
     // The data variable contains the retrieved item
-    console.log('Retrieved item:', data.Item);
+    if (data && data.Item && data.Item.RealData_raw && data.Item.RealData_raw.B) {
+      const realValue = convertBinaryToReal(data.Item.RealData_raw.B);
+      console.log('Retrieved item - RealData:', realValue);
+      // Now you have the real value in the "realValue" variable
+    } else {
+      console.log('Invalid data format or missing attribute');
+    }
   })
   .catch((err) => {
     console.error('Error retrieving item:', err);
-  });
+  }); */
 
 app.post('/trashCanFilledPercentage', function (req, res) {
   trashCanFilledPercentage = Number(req.body.value);
@@ -65,7 +108,7 @@ app.get('/', function (req, res) {
 
 app.use('/js', express.static('js'));
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 
 const server = http.listen(port, () => {
   const { port } = server.address();
@@ -76,3 +119,6 @@ io.on('connection', function (socket) {
   socket.emit('trashCanFilledPercentageUpdate', trashCanFilledPercentage);
   console.log('Client connected...');
 });
+
+// Initial call to update trashCanFilledPercentage variable
+updateTrashCanFilledPercentage();
