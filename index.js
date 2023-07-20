@@ -38,39 +38,41 @@ const params = {
 
 // Convert Binary data to a real value (floating-point number)
 function toDecimal(v) {
-    let binary = '';
-    if(typeof v == 'string') {
-      binary = v.split();
+  let binary = '';
+  if (typeof v == 'string') {
+    binary = v.split();
+  } else {
+    binary = v.toString().split();
+  }
+  let decimal = 0;
+  for (let i = 0; i < binary.length; i++) {
+    decimal = (decimal * 2) + binary[i];
+  }
+  return decimal;
+}
+
+async function retrievePercentageFromDynmoDBAndUpdatePercentage() {
+  try {
+    const data = await dynamoDBClient.send(new GetItemCommand(params));
+    if (data && data.Item && data.Item.RealData_raw && data.Item.RealData_raw.B) {
+      const realValue = toDecimal(data.Item.RealData_raw.B);
+      console.log('Retrieved item - RealData:', realValue);
+
+      // Get the last value from the array
+      const lastValue = realValue[realValue.length - 1];
+      trashCanFilledPercentage = lastValue;
+
+      io.emit('trashCanFilledPercentageUpdate', trashCanFilledPercentage);
+      console.log('Updated trashfill percentage: ' + trashCanFilledPercentage);
     } else {
-        binary = v.toString().split();
+      console.log('Invalid data format or missing attribute');
     }
-    let decimal = 0;
-    for(let i = 0; i < binary.length; i++) {
-        decimal = (decimal * 2) + binary[i];
-    }
-    return decimal;
+  } catch (err) {
+    console.error('Error retrieving item:', err);
   }
-// Function to update trashCanFilledPercentage variable
-async function updateTrashCanFilledPercentage() {
-    try {
-      const data = await dynamoDBClient.send(new GetItemCommand(params));
-      if (data && data.Item && data.Item.RealData_raw && data.Item.RealData_raw.B) {
-        const realValue = toDecimal(data.Item.RealData_raw.B);
-        trashCanFilledPercentage = realValue;
-        console.log('Retrieved item - RealData:', realValue);
-  
-        // Get the last value from the array
-        const lastValue = realValue[realValue.length - 1];
-        console.log('Last value:', lastValue);
-      } else {
-        console.log('Invalid data format or missing attribute');
-      }
-    } catch (err) {
-      console.error('Error retrieving item:', err);
-    }
-  }
-  
-  
+}
+
+
 app.get('/trashCanFilledPercentage', function (req, res) {
   res.write(String(trashCanFilledPercentage));
   res.end();
@@ -92,6 +94,8 @@ dynamoDBClient.send(new GetItemCommand(params))
     console.error('Error retrieving item:', err);
   }); */
 
+
+// Forcefully update server percetage(Not recommended)
 app.post('/trashCanFilledPercentage', function (req, res) {
   trashCanFilledPercentage = Number(req.body.value);
 
@@ -120,5 +124,11 @@ io.on('connection', function (socket) {
   console.log('Client connected...');
 });
 
-// Initial call to update trashCanFilledPercentage variable
-updateTrashCanFilledPercentage();
+
+setTimeout(() => {
+  try {
+    retrievePercentageFromDynmoDBAndUpdatePercentage()
+  } catch (ex) {
+    console.error(ex)
+  }
+}, 2000)

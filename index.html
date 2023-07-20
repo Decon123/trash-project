@@ -5,14 +5,16 @@
     <title>Water Tank Visualization</title>
     <script src="https://cdn.fusioncharts.com/fusioncharts/latest/fusioncharts.js"></script>
     <script src="./js/fusioncharts.theme.candy.js"></script>
-    <script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
+    <script src="https://cdn.socket.io/4.6.0/socket.io.min.js"
+        integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+"
+        crossorigin="anonymous"></script>
 
     <style>
         body {
             background-color: #262a33FC;
         }
 
-        #chart-container{
+        #chart-container {
             margin-top: 60px;
             max-height: 430px;
             width: 100%;
@@ -58,19 +60,15 @@
             },
             events: {
                 rendered: function (evtObj, argObj) {
-                    chartRef = evtObj.sender;
                     setInterval(function () {
-                        chartRef.getData();
-                        chartRef.setData(filledPercentage);
-                    }, 500);
+                        evtObj.sender.getData();
+                        evtObj.sender.setData(filledPercentage);
+                    }, 100);
                 },
                 realTimeUpdateComplete: function (evt, arg) {
-                    var annotations = chartRef.annotations,
-                        dataVal = chartRef.getData(),
+                    var annotations = evt.sender.annotations,
+                        dataVal = evt.sender.getData(),
                         colorVal = (dataVal >= 70) ? "#6caa03" : ((dataVal <= 35) ? "#e44b02" : "#f8bd1b");
-                    //Updating value
-
-                    console.log("dataval", annotations);
 
                     //Changing background color as per value
                     annotations && annotations.update('rangeBg', {
@@ -79,23 +77,17 @@
 
                 }
             }
-
         };
 
-        FusionCharts.ready(function(){
+        FusionCharts.ready(function () {
             var fusioncharts = new FusionCharts(chartConfig);
             fusioncharts.render();
 
             socket.on('trashCanFilledPercentageUpdate', function (data) {
-                if(data == null) return;
+                if (data == null) return;
 
                 filledPercentage = Number(data);
                 console.log("Updated percentage: " + data);
-
-                // Update the chart with the new value
-                if (chartRef) {
-                    chartRef.setData(filledPercentage);
-                }
             });
         });
 
