@@ -1,3 +1,4 @@
+//install required npm packages
 const express = require('express');
 const app = express();
 const path = require('path');
@@ -32,7 +33,7 @@ const params = {
   Key: {
     // Define the primary key of the item you want to retrieve
     // Replace 'primaryKey' with the actual primary key attribute name
-    id: { S: 'c3edce96-76f4-4627-be78-3537c236f97f' }, // Replace with the primary key value
+    id: { S: '618c5044-ae60-448d-a0e1-59d3cd851f97' }, // Replace with the primary key value
   },
 };
 
@@ -71,7 +72,6 @@ async function retrievePercentageFromDynmoDBAndUpdatePercentage() {
     console.error('Error retrieving item:', err);
   }
 }
-
 
 app.get('/trashCanFilledPercentage', function (req, res) {
   res.write(String(trashCanFilledPercentage));
@@ -132,3 +132,4 @@ setTimeout(() => {
     console.error(ex)
   }
 }, 2000)
+
