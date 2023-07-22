@@ -19,7 +19,7 @@ const awsConfig = {
     accessKeyId: '',
     secretAccessKey: '',
   },
-  region: 'us-east-1', // Replace with your desired AWS region
+  region: '', // Replace with your desired AWS region
 };
 
 // Create a DynamoDB client
@@ -34,7 +34,7 @@ const params = {
   Key: {
     // Define the primary key of the item you want to retrieve
     // Replace 'primaryKey' with the actual primary key attribute name
-    id: { S: '10b32e3d-0f9b-48eb-8d2c-c0e06641c4c8' }, // Replace with the primary key value
+    id: { S: '' }, // Replace with the primary key value
   },
 };
 
