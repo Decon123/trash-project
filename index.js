@@ -16,8 +16,8 @@ const { fromBase64 } = require('@aws-sdk/util-base64-node');
 // Set your AWS credentials (or use environment variables)
 const awsConfig = {
   credentials: {
-    accessKeyId: 'AKIA457R5LNBDV6Y2PBG',
-    secretAccessKey: 'sC+uATTeF4RDkK7y3XQmKVxUe3Y30SoXLvhtDAe4',
+    accessKeyId: '',
+    secretAccessKey: '',
   },
   region: 'us-east-1', // Replace with your desired AWS region
 };
@@ -26,6 +26,7 @@ const awsConfig = {
 const dynamoDBClient = new DynamoDBClient(awsConfig);
 
 let trashCanFilledPercentage = 0;
+let bin_height = 20;
 
 // Example: Retrieve an item from DynamoDB table
 const params = {
@@ -33,7 +34,7 @@ const params = {
   Key: {
     // Define the primary key of the item you want to retrieve
     // Replace 'primaryKey' with the actual primary key attribute name
-    id: { S: '618c5044-ae60-448d-a0e1-59d3cd851f97' }, // Replace with the primary key value
+    id: { S: '10b32e3d-0f9b-48eb-8d2c-c0e06641c4c8' }, // Replace with the primary key value
   },
 };
 
@@ -61,8 +62,10 @@ async function retrievePercentageFromDynmoDBAndUpdatePercentage() {
 
       // Get the last value from the array
       const lastValue = realValue[realValue.length - 1];
-      trashCanFilledPercentage = lastValue;
-
+      console.log(lastValue);
+      //trashCanFilledPercentage = lastValue;
+      trashCanFilledPercentage = round((lastValue/bin_height)*100, 2);
+      console.log(trashCanFilledPercentage);
       io.emit('trashCanFilledPercentageUpdate', trashCanFilledPercentage);
       console.log('Updated trashfill percentage: ' + trashCanFilledPercentage);
     } else {
